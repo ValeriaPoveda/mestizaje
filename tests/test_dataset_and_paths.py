@@ -9,6 +9,31 @@ ARTWORKS_DIR = os.path.join(BASE_DIR, "artworks")
 ALLOWED_EXTENSIONS = [".jpg", ".jpeg", ".png", ".JPG", ".JPEG", ".PNG"]
 
 
+def _find_image(base_path):
+    base, _ = os.path.splitext(base_path)
+    filename = os.path.basename(base)
+    directory = os.path.dirname(base)
+
+    digits_only = "".join(ch for ch in filename if ch.isdigit())
+    names = [filename]
+    if digits_only and digits_only not in names:
+        names.append(digits_only)
+
+    directories = [directory]
+    if directory.startswith("artworks"):
+        tail = directory[len("artworks") + 1:] if len(directory) > len("artworks") else ""
+        for batch in ("batch1", "batch2"):
+            batch_dir = os.path.join("artworks", batch, tail) if tail else os.path.join("artworks", batch)
+            directories.append(batch_dir)
+
+    for name in names:
+        for ext in ALLOWED_EXTENSIONS:
+            for dir_path in directories:
+                if os.path.isfile(os.path.join(dir_path, name + ext)):
+                    return True
+    return False
+
+
 class TestDatasetAndPaths(unittest.TestCase):
 
     def setUp(self):
@@ -49,26 +74,7 @@ class TestDatasetAndPaths(unittest.TestCase):
             for artist in country["artists"]:
                 for art in artist["artworks"]:
                     path = art["path"]
-                    base, _ = os.path.splitext(path)
-                    filename = os.path.basename(base)
-                    directory = os.path.dirname(base)
-                    digits_only = "".join(ch for ch in filename if ch.isdigit())
-
-                    name_candidates = [filename]
-                    if digits_only and digits_only not in name_candidates:
-                        name_candidates.append(digits_only)
-
-                    exists = False
-                    for name in name_candidates:
-                        for ext in ALLOWED_EXTENSIONS:
-                            candidate = os.path.join(directory, name + ext)
-                            if os.path.isfile(candidate):
-                                exists = True
-                                break
-                        if exists:
-                            break
-
-                    if not exists:
+                    if not _find_image(path):
                         missing.append(path)
 
         self.assertEqual(

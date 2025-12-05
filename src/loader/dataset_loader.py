@@ -18,7 +18,7 @@ class DatasetLoader:
     def _resolve_artwork_path(self, path):
         """
         Return an existing image path if found (handles extension and digit-only fallbacks),
-        otherwise None.
+        otherwise None. Also searches batch subfolders (batch1, batch2) when needed.
         """
         base, _ = os.path.splitext(path)
         filename = os.path.basename(base)
@@ -29,11 +29,20 @@ class DatasetLoader:
         if digits_only and digits_only not in name_candidates:
             name_candidates.append(digits_only)
 
+        # Build directories to search: original + batch subfolders
+        directories = [directory]
+        if directory.startswith("artworks"):
+            tail = directory[len("artworks") + 1:] if len(directory) > len("artworks") else ""
+            for batch in ("batch1", "batch2"):
+                batch_dir = os.path.join("artworks", batch, tail) if tail else os.path.join("artworks", batch)
+                directories.append(batch_dir)
+
         for name in name_candidates:
             for ext in ALLOWED_EXTENSIONS:
-                candidate = os.path.join(directory, name + ext)
-                if os.path.exists(candidate):
-                    return candidate
+                for dir_path in directories:
+                    candidate = os.path.join(dir_path, name + ext)
+                    if os.path.exists(candidate):
+                        return candidate
         return None
 
     def load(self):
