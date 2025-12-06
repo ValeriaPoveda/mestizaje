@@ -1,4 +1,5 @@
 # Mestizaje – Latin American Art Experience
+Valeria Poveda and Rebekah Jensen
 
 **Project Overview**
 
