@@ -25,7 +25,7 @@ Mestizaje is a Tkinter-based swipe application that showcases Latin American art
 - Clear separation between UI and logic prevents styling updates from affecting core behavior.  
 - Pillow-based animations handle fade and slide transitions within Tkinter.
 
-#**Notable Behaviors**
+**Notable Behaviors**
 
 - “Show Info” uses a blue accent button while keeping the control layout unchanged.  
 - The image loader falls back to a gray placeholder when files cannot be resolved.  
