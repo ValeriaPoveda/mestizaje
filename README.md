@@ -91,6 +91,3 @@ From the project root directory, the program can be executed with: python src/ma
 - Use of the Factory Method design pattern  
 - Modular and extensible architecture appropriate for future development
 
-
-Tests can be run using:
-
